@@ -1,5 +1,14 @@
 [
   {
+    "slug": "pythonpdb",
+    "title": "使用 Python 脚本高效批量下载 PDB 结构",
+    "tags": [],
+    "date": "2026-01-24T10:36",
+    "summary": "一种自动化下载pdb的方法",
+    "hidden": false,
+    "category": ""
+  },
+  {
     "slug": "RSpred",
     "title": "Rspred的配置与使用",
     "tags": [],
