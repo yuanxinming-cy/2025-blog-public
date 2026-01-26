@@ -32,7 +32,7 @@ cd RSCore/synthetic_scorers/RSPred
 
 ```
 
-**注意**：请检查当前目录下是否存在 `models/` 文件夹。如果该文件夹为空或不存在，可能需要根据该项目的 README 下载额外的权重文件（通常名为 `chembl_230K_final_87.0.pickle`）。
+**检查**：请检查当前目录下是否存在 `models/` 文件夹。
 
 ## 2. 预测脚本 (The Predictor Script)
 
