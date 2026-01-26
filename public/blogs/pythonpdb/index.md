@@ -15,7 +15,7 @@ pip install requests
 
 **2. 自动化下载脚本 (The Script)**
 
-新建一个名为 `pdb_download.py` 的文件，并将以下代码完整复制进去。
+新建一个名为 `pdb_download.py` 的文件，写入以下内容。
 
 ```python
 import os, argparse, requests, gzip, shutil
