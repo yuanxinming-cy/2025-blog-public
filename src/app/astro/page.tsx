@@ -3,14 +3,14 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 import initialList from './list.json'
-import { RandomLayout } from './components/random-layout'
-import UploadDialog from './components/upload-dialog'
-import { pushPictures } from './services/push-pictures'
+import { RandomLayout } from '../pictures/components/random-layout'
+import UploadDialog from '../pictures/components/upload-dialog'
+import { pushPictures } from '../pictures/services/push-pictures'
 import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
 import type { ImageItem } from '../projects/components/image-upload-dialog'
-import { useRouter } from 'next/navigation'
 
 export interface Picture {
 	id: string
