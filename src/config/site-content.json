@@ -5,7 +5,7 @@
 		"username": "yuanxinming"
 	},
 	"theme": {
-		"colorBrand": "#2E9BA2",
+		"colorBrand": "#de4331",
 		"colorPrimary": "#4E3F42",
 		"colorSecondary": "#acadae",
 		"colorBrandSecondary": "#FCC841",
@@ -15,14 +15,12 @@
 		"colorArticle": "#6f6f6f33"
 	},
 	"backgroundColors": [
-		"#05BD47",
-		"#1EEEA8",
-		"#AD470C",
-		"#5FB9F7",
-		"#B8BF97",
-		"#9E2353",
-		"#DEA845",
-		"#A57D5A"
+		"#FCC841",
+		"#DFEFFC",
+		"#DEDE92",
+		"#DE4331",
+		"#FE9750",
+		"#FCC841"
 	],
 	"artImages": [
 		{
