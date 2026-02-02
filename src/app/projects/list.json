@@ -2,8 +2,8 @@
 	{
 		"name": "星夜",
 		"year": 2025,
-		"image": "blob:https://yuanxinming.vercel.app/f288197b-1369-4242-a216-dec05ef92bab",
-		"url": "Z-image",
+		"image": "/images/project/4ac445f0d68e9349.png",
+		"url": "https://yuanxinming.vercel.app/astro",
 		"description": "https://yuanxinming.vercel.app/astro",
 		"tags": [
 			"lora",
