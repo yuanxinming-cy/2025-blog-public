@@ -39,11 +39,11 @@
 		"order": 6,
 		"offsetX": null,
 		"offsetY": null,
-		"enabled": false
+		"enabled": true
 	},
 	"socialButtons": {
-		"width": 315,
-		"height": 48,
+		"width": 307,
+		"height": 51,
 		"order": 6,
 		"offsetX": null,
 		"offsetY": null,
@@ -74,8 +74,8 @@
 		"enabled": true
 	},
 	"navCard": {
-		"width": 280,
-		"height": 434,
+		"width": 295,
+		"height": 499,
 		"order": 2,
 		"offsetX": null,
 		"offsetY": null,
