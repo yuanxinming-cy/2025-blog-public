@@ -38,5 +38,15 @@
 			"AI"
 		],
 		"stars": 3
+	},
+	{
+		"name": "Spacesniffer",
+		"logo": "https://th.bing.com/th/id/ODF.yb_TYfD3hQMMNfSJzMTqUQ?w=32&h=32&qlt=90&pcl=fffffc&o=6&pid=1.2",
+		"url": "https://sourceforge.net/projects/spacesniffer/",
+		"description": "磁盘清理领域永远的神",
+		"tags": [
+			"实用工具"
+		],
+		"stars": 5
 	}
 ]
