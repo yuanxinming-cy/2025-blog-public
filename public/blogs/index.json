@@ -4,7 +4,7 @@
     "title": " Aria2c 环境配置与 PowerShell 下载加速指南",
     "tags": [],
     "date": "2026-02-03T11:16",
-    "summary": "目前能找到的最优下载加速方案之一",
+    "summary": "方便，快捷，极简的多线程下载方案",
     "cover": "/blogs/aria2c/94edd9193564485a.png",
     "hidden": false,
     "category": "代码记录"
