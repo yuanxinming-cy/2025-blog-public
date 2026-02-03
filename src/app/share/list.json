@@ -28,5 +28,15 @@
 			"实用工具"
 		],
 		"stars": 5
+	},
+	{
+		"name": "DeepSeek",
+		"logo": "https://th.bing.com/th/id/OIP.lzhJpDH7LjYm7SAW1ih3pgAAAA?w=108&h=108&c=1&bgcl=02c4b2&r=0&o=7&dpr=1.5&pid=ImgRC&rm=3",
+		"url": "https://www.deepseek.com/",
+		"description": "方便且可靠的国产AI",
+		"tags": [
+			"AI"
+		],
+		"stars": 3
 	}
 ]
