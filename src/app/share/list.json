@@ -8,5 +8,15 @@
 			"AI"
 		],
 		"stars": 5
+	},
+	{
+		"name": "Aurora VPN",
+		"logo": "https://th.bing.com/th/id/OIP.BcUMtBIUQWKKJO8r0lYeoQHaHa?w=108&h=108&c=1&bgcl=4f2111&r=0&o=7&dpr=1.5&pid=ImgRC&rm=3",
+		"url": "https://www.arr.network/",
+		"description": "免费且有一定稳定性的翻墙工具",
+		"tags": [
+			"实用工具"
+		],
+		"stars": 5
 	}
 ]
