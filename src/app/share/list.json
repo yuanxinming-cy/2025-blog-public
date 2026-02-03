@@ -17,6 +17,16 @@
 		"tags": [
 			"实用工具"
 		],
+		"stars": 4
+	},
+	{
+		"name": "Electerm",
+		"logo": "https://th.bing.com/th/id/OIP.CPbeL2ehe8y92hwNvLhg_QHaHa?w=108&h=108&c=1&bgcl=6cdcc3&r=0&o=7&dpr=1.5&pid=ImgRC&rm=3",
+		"url": "https://github.com/electerm/electerm",
+		"description": "开源免费的终端模拟器",
+		"tags": [
+			"实用工具"
+		],
 		"stars": 5
 	}
 ]
