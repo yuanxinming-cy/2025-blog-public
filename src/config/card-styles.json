@@ -47,7 +47,7 @@
 		"order": 6,
 		"offsetX": null,
 		"offsetY": null,
-		"enabled": true
+		"enabled": false
 	},
 	"shareCard": {
 		"width": 200,
