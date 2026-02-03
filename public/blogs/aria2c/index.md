@@ -73,7 +73,7 @@ function download {
 在终端中直接输入函数名及直链下载链接：
 
 ```powershell
-download https://github.com/user/repo/archive/main.zip
+download "https://github.com/user/repo/archive/main.zip"
 
 ```
 
