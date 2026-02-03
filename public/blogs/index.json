@@ -1,5 +1,14 @@
 [
   {
+    "slug": "ml.draw",
+    "title": "机器学习项目阶段性绘图脚本留存(画箱型图分析差异)",
+    "tags": [],
+    "date": "2026-02-03T18:00",
+    "summary": "",
+    "hidden": true,
+    "category": "机器学习模型工程"
+  },
+  {
     "slug": "aria2c",
     "title": " Aria2c 环境配置与 PowerShell 下载加速指南",
     "tags": [],
