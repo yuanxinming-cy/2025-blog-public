@@ -1,15 +1,15 @@
 {
 	"artCard": {
-		"width": 360,
-		"height": 200,
+		"width": 356,
+		"height": 190,
 		"order": 3,
-		"offsetX": null,
-		"offsetY": null,
+		"offsetX": -174,
+		"offsetY": -340,
 		"enabled": true
 	},
 	"hiCard": {
-		"width": 348,
-		"height": 347,
+		"width": 311,
+		"height": 268,
 		"order": 1,
 		"offsetX": null,
 		"offsetY": null,
@@ -28,8 +28,8 @@
 		"width": 350,
 		"height": 286,
 		"order": 5,
-		"offsetX": null,
-		"offsetY": null,
+		"offsetX": 185,
+		"offsetY": -59,
 		"enabled": true
 	},
 	"musicCard": {
@@ -37,8 +37,8 @@
 		"height": 66,
 		"offset": 120,
 		"order": 6,
-		"offsetX": 200,
-		"offsetY": 281,
+		"offsetX": 199,
+		"offsetY": 254,
 		"enabled": true
 	},
 	"socialButtons": {
@@ -53,16 +53,16 @@
 		"width": 200,
 		"height": 180,
 		"order": 7,
-		"offsetX": -92,
-		"offsetY": 218,
+		"offsetX": -88,
+		"offsetY": 178,
 		"enabled": true
 	},
 	"articleCard": {
 		"width": 266,
 		"height": 160,
 		"order": 8,
-		"offsetX": -433,
-		"offsetY": 213,
+		"offsetX": -415,
+		"offsetY": 200,
 		"enabled": true
 	},
 	"writeButtons": {
@@ -77,7 +77,7 @@
 		"width": 303,
 		"height": 504,
 		"order": 2,
-		"offsetX": -509,
+		"offsetX": -491,
 		"offsetY": -328,
 		"enabled": true
 	},
