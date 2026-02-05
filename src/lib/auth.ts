@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 const GITHUB_TOKEN_CACHE_KEY = 'github_token'
 
 /**
- * ✅ 确保导出 clearAllAuthCache 以修复编译错误
+ * 确保导出 clearAllAuthCache 以修复编译错误
  */
 export function clearAllAuthCache(): void {
     if (typeof sessionStorage !== 'undefined') {
@@ -15,14 +15,14 @@ export function clearAllAuthCache(): void {
 }
 
 /**
- * ✅ 恢复 hasAuth 导出
+ * 恢复 hasAuth 导出
  */
 export async function hasAuth(): Promise<boolean> {
     return !!useConfigStore.getState().rawPem
 }
 
 /**
- * ✅ 恢复旧系统需要的缓存操作函数（作为兼容占位）
+ * 恢复旧系统需要的缓存操作函数（作为兼容占位）
  */
 export async function getPemFromCache() { 
     return useConfigStore.getState().rawPem 
