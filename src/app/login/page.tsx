@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useConfigStore } from '@/app/(home)/stores/config-store' //
+import { useConfigStore } from '@/app/(home)/stores/config-store'
 import CryptoJS from 'crypto-js'
-import { motion } from 'motion/react' //
-import { KeyRound, ShieldCheck, UploadCloud, LogOut } from 'lucide-react'
+import { motion } from 'motion/react'
+import { KeyRound, ShieldCheck, UploadCloud, LogOut, ArrowLeft } from 'lucide-react'
 
 export default function LoginPage() {
     const { encryptedPem, setAuth, isHydrated, rawPem, logout } = useConfigStore()
@@ -14,12 +14,10 @@ export default function LoginPage() {
     const [error, setError] = useState('')
     const router = useRouter()
 
-    // --- 解决“回不去”的问题：增加一个手动退出逻辑 ---
-    // 只有当你手动访问 /login 且 rawPem 已经存在时，我们才自动跳走
-    // 如果你想重新设置，点击下方的“退出并清理”
+    // Auto-redirect if already authenticated
     useEffect(() => {
         if (rawPem && isHydrated) {
-            // router.push('/') // 先注释掉这行自动跳转，方便调试界面！
+            router.push('/')
         }
     }, [rawPem, isHydrated, router])
 
@@ -28,56 +26,66 @@ export default function LoginPage() {
         setError('')
         
         if (encryptedPem) {
-            // 解锁模式
+            // UNLOCK MODE
             try {
                 const bytes = CryptoJS.AES.decrypt(encryptedPem, password)
                 const originalPem = bytes.toString(CryptoJS.enc.Utf8)
                 
-                // --- 严谨校验：必须包含 PEM 头且长度合理 ---
                 if (originalPem.includes('-----BEGIN') && originalPem.length > 100) {
                     setAuth(originalPem) 
-                    alert('验证成功！')
                     router.push('/')
                 } else {
                     throw new Error('Invalid Key')
                 }
             } catch {
-                setError('密码错误，解密失败！')
+                setError('Incorrect password. Decryption failed.')
             }
         } else {
-            // 初始化模式
+            // INITIALIZATION MODE
             if (!pemFileContent.includes('-----BEGIN')) {
-                setError('文件格式错误：未检测到有效的 PEM 头部')
+                setError('Invalid file format. PEM header not found.')
                 return
             }
             if (password.length < 4) {
-                setError('为了安全，请设置至少 4 位密码')
+                setError('Password must be at least 4 characters long.')
                 return
             }
             setAuth(pemFileContent, password)
-            alert('初始化成功！已加密存储。')
             router.push('/')
         }
     }
 
-    if (!isHydrated) return null // 等待加载，防止水合报错
+    if (!isHydrated) return null 
 
     return (
         <div className='min-h-screen w-full flex items-center justify-center bg-slate-50'>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='w-full max-w-md p-6'>
-                <div className='bg-white rounded-[2rem] p-10 shadow-xl border border-slate-100'>
+            <motion.div 
+                initial={{ opacity: 0, y: 10 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                className='w-full max-w-md p-6'
+            >
+                <div className='bg-white rounded-[2.5rem] p-10 shadow-2xl shadow-slate-200/50 border border-slate-100'>
                     <div className='text-center mb-8'>
-                        <h1 className='text-2xl font-bold text-slate-800'>新明，这是新界面</h1>
-                        <p className='text-sm text-slate-400'>如果看到这行字，说明改动生效了</p>
+                        <div className='w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4'>
+                            {encryptedPem ? <KeyRound size={28} /> : <ShieldCheck size={28} />}
+                        </div>
+                        <h1 className='text-2xl font-bold text-slate-800 tracking-tight'>
+                            {encryptedPem ? 'Administrator Access' : 'System Initialization'}
+                        </h1>
+                        <p className='text-sm text-slate-400 mt-2'>
+                            {encryptedPem 
+                                ? 'Verify your identity to manage the site' 
+                                : 'Upload your PEM key to set up admin rights'}
+                        </p>
                     </div>
 
                     <form onSubmit={handleAction} className='space-y-6'>
                         {!encryptedPem ? (
                             <div className="space-y-4">
-                                <label className="block p-4 border-2 border-dashed rounded-xl text-center cursor-pointer hover:bg-slate-50">
+                                <label className="block p-6 border-2 border-dashed border-slate-200 rounded-2xl text-center cursor-pointer hover:border-emerald-300 hover:bg-emerald-50/30 transition-all">
                                     <UploadCloud className="mx-auto text-slate-300 mb-2" />
-                                    <span className="text-xs text-slate-500">
-                                        {pemFileContent ? "✅ 文件已读取" : "第一步：上传 PEM 文件"}
+                                    <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                        {pemFileContent ? "✅ Key Loaded Successfully" : "Step 1: Upload .PEM File"}
                                     </span>
                                     <input type="file" className="hidden" onChange={e => {
                                         const file = e.target.files?.[0]
@@ -88,49 +96,68 @@ export default function LoginPage() {
                                         }
                                     }} />
                                 </label>
-                                <input 
-                                    type="password"
-                                    placeholder="第二步：设置解锁密码"
-                                    className="w-full p-4 bg-slate-100 rounded-xl outline-none"
-                                    value={password}
-                                    onChange={e => setPassword(e.target.value)}
-                                />
+                                <div className='space-y-1.5'>
+                                    <label className='text-[10px] font-bold text-slate-400 uppercase ml-1'>Step 2: Set Access Password</label>
+                                    <input 
+                                        type="password"
+                                        placeholder="Enter password..."
+                                        className="w-full p-4 bg-slate-50 border border-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-400/20 focus:border-emerald-400 transition-all"
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                    />
+                                </div>
                             </div>
                         ) : (
-                            <div className="space-y-4 text-center">
-                                <p className="text-xs text-emerald-500 font-bold">检测到已加密的密钥，请输入密码解锁</p>
-                                <input 
-                                    type="password"
-                                    placeholder="输入密码..."
-                                    className="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-400 transition-all"
-                                    value={password}
-                                    onChange={e => setPassword(e.target.value)}
-                                    autoFocus
-                                />
+                            <div className="space-y-4">
+                                <div className='space-y-1.5'>
+                                    <label className='text-[10px] font-bold text-slate-400 uppercase ml-1'>Access Key Required</label>
+                                    <input 
+                                        type="password"
+                                        placeholder="Enter your password..."
+                                        className="w-full p-4 bg-slate-50 border border-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-400/20 focus:border-emerald-400 transition-all"
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                        autoFocus
+                                    />
+                                </div>
                             </div>
                         )}
 
-                        <button type="submit" className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all">
-                            {encryptedPem ? "解锁进入" : "完成配置"}
+                        <button 
+                            type="submit" 
+                            className="w-full py-4 bg-slate-900 text-white rounded-xl font-semibold hover:bg-emerald-600 shadow-lg shadow-slate-900/10 hover:shadow-emerald-600/20 transition-all"
+                        >
+                            {encryptedPem ? "Authorize Session" : "Finalize Setup"}
                         </button>
 
-                        {error && <p className="text-center text-red-500 text-xs font-bold">{error}</p>}
+                        {error && (
+                            <motion.p 
+                                initial={{ opacity: 0 }} 
+                                animate={{ opacity: 1 }} 
+                                className="text-center text-rose-500 text-xs font-medium bg-rose-50 py-2 rounded-lg"
+                            >
+                                {error}
+                            </motion.p>
+                        )}
                     </form>
 
-                    {/* 解决“回不去”的终极手段：重置按钮 */}
                     <div className="mt-10 pt-6 border-t border-slate-50 flex justify-between items-center">
-                        <button onClick={() => router.push('/')} className="text-xs text-slate-300 hover:text-slate-600">返回首页</button>
+                        <button 
+                            onClick={() => router.push('/')} 
+                            className="flex items-center gap-1 text-[11px] font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-widest"
+                        >
+                            <ArrowLeft size={12}/> Home
+                        </button>
                         <button 
                             onClick={() => {
-                                if(confirm('确定要清除本地所有登录数据吗？')) {
+                                if(confirm('Erase all local security data? This action cannot be undone.')) {
                                     logout()
-                                    localStorage.clear()
                                     window.location.reload()
                                 }
                             }} 
-                            className="flex items-center gap-1 text-xs text-red-300 hover:text-red-500"
+                            className="flex items-center gap-1 text-[11px] font-bold text-rose-300 hover:text-rose-500 transition-colors uppercase tracking-widest"
                         >
-                            <LogOut size={12}/> 清除数据
+                            <LogOut size={12}/> Reset
                         </button>
                     </div>
                 </div>
