@@ -3,13 +3,11 @@
 		"name": "星夜",
 		"year": 2025,
 		"image": "/images/project/4ac445f0d68e9349.png",
-		"url": "https://yuanxinming.vercel.app/astro",
+		"url": "https://yuanxinming.vercel.app/projects/astro",
 		"description": "基于lora技术的Z-image图像生成",
 		"tags": [
 			"lora",
 			"zimage"
-		],
-		"github": "https://yuanxinming.vercel.app/astro",
-		"npm": "https://yuanxinming.vercel.app/astro"
+		]
 	}
 ]
