@@ -5,130 +5,132 @@ import { useRouter } from 'next/navigation'
 import { useConfigStore } from '@/app/(home)/stores/config-store' //
 import CryptoJS from 'crypto-js'
 import { motion } from 'motion/react' //
-import { KeyRound, ShieldCheck, UploadCloud, ArrowRight } from 'lucide-react'
+import { KeyRound, ShieldCheck, UploadCloud, LogOut } from 'lucide-react'
 
 export default function LoginPage() {
-    const { encryptedPem, setAuth, isHydrated, rawPem } = useConfigStore()
+    const { encryptedPem, setAuth, isHydrated, rawPem, logout } = useConfigStore()
     const [password, setPassword] = useState('')
     const [pemFileContent, setPemFileContent] = useState('')
     const [error, setError] = useState('')
     const router = useRouter()
 
-    // --- 防炸逻辑 1：如果已经解锁成功，自动跳回首页 ---
+    // --- 解决“回不去”的问题：增加一个手动退出逻辑 ---
+    // 只有当你手动访问 /login 且 rawPem 已经存在时，我们才自动跳走
+    // 如果你想重新设置，点击下方的“退出并清理”
     useEffect(() => {
-        if (rawPem) {
-            router.push('/')
+        if (rawPem && isHydrated) {
+            // router.push('/') // 先注释掉这行自动跳转，方便调试界面！
         }
-    }, [rawPem, router])
+    }, [rawPem, isHydrated, router])
 
     const handleAction = (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
         
         if (encryptedPem) {
-            // --- 场景：解锁模式 ---
+            // 解锁模式
             try {
                 const bytes = CryptoJS.AES.decrypt(encryptedPem, password)
                 const originalPem = bytes.toString(CryptoJS.enc.Utf8)
-                // 校验解密结果是否真的是 PEM 格式
-                if (originalPem.includes('-----BEGIN')) {
+                
+                // --- 严谨校验：必须包含 PEM 头且长度合理 ---
+                if (originalPem.includes('-----BEGIN') && originalPem.length > 100) {
                     setAuth(originalPem) 
+                    alert('验证成功！')
                     router.push('/')
                 } else {
-                    throw new Error()
+                    throw new Error('Invalid Key')
                 }
             } catch {
-                setError('密码错误，无法解密密钥')
+                setError('密码错误，解密失败！')
             }
         } else {
-            // --- 场景：初次绑定模式 ---
-            if (!pemFileContent || !password) {
-                setError('请同时上传文件并设置密码')
+            // 初始化模式
+            if (!pemFileContent.includes('-----BEGIN')) {
+                setError('文件格式错误：未检测到有效的 PEM 头部')
+                return
+            }
+            if (password.length < 4) {
+                setError('为了安全，请设置至少 4 位密码')
                 return
             }
             setAuth(pemFileContent, password)
+            alert('初始化成功！已加密存储。')
             router.push('/')
         }
     }
 
-    // --- 防炸逻辑 2：等待存储就绪 ---
-    // 如果 Zustand 还没读完 localStorage，我们先渲染一个空白或者加载状态
-    // 这样可以彻底避免 Hydration Error
-    if (!isHydrated) {
-        return <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center text-slate-400 text-xs">Loading Secure Storage...</div>
-    }
+    if (!isHydrated) return null // 等待加载，防止水合报错
 
     return (
-        <div className='min-h-screen w-full flex items-center justify-center bg-[#f8fafc]'>
-            <motion.div 
-                initial={{ opacity: 0, y: 20 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                className='w-full max-w-md p-6'
-            >
-                <div className='bg-white/80 backdrop-blur-xl border border-white rounded-[2.5rem] p-10 shadow-xl'>
+        <div className='min-h-screen w-full flex items-center justify-center bg-slate-50'>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='w-full max-w-md p-6'>
+                <div className='bg-white rounded-[2rem] p-10 shadow-xl border border-slate-100'>
                     <div className='text-center mb-8'>
-                        <div className='w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4'>
-                            {encryptedPem ? <KeyRound /> : <ShieldCheck />}
-                        </div>
-                        <h1 className='text-xl font-bold text-slate-700'>
-                            {encryptedPem ? '身份验证' : '初始化管理员'}
-                        </h1>
-                        <p className='text-xs text-slate-400 mt-2'>
-                            {encryptedPem ? '请输入本地解锁密码' : '请关联 PEM 密钥并设置访问密码'}
-                        </p>
+                        <h1 className='text-2xl font-bold text-slate-800'>新明，这是新界面</h1>
+                        <p className='text-sm text-slate-400'>如果看到这行字，说明改动生效了</p>
                     </div>
 
                     <form onSubmit={handleAction} className='space-y-6'>
-                        {!encryptedPem && (
-                            <label className='block w-full border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:border-emerald-400 cursor-pointer transition-all bg-white/50'>
-                                <UploadCloud className='mx-auto mb-2 text-slate-300' />
-                                <span className='text-xs text-slate-500 block'>
-                                    {pemFileContent ? '✅ 密钥已读取' : '点击上传 .pem 密钥文件'}
-                                </span>
-                                <input type='file' className='hidden' accept=".pem,.key,.txt" onChange={e => {
-                                    const file = e.target.files?.[0]
-                                    if (file) {
-                                        const reader = new FileReader()
-                                        reader.onload = (ev) => setPemFileContent(ev.target?.result as string)
-                                        reader.readAsText(file)
-                                    }
-                                }} />
-                            </label>
+                        {!encryptedPem ? (
+                            <div className="space-y-4">
+                                <label className="block p-4 border-2 border-dashed rounded-xl text-center cursor-pointer hover:bg-slate-50">
+                                    <UploadCloud className="mx-auto text-slate-300 mb-2" />
+                                    <span className="text-xs text-slate-500">
+                                        {pemFileContent ? "✅ 文件已读取" : "第一步：上传 PEM 文件"}
+                                    </span>
+                                    <input type="file" className="hidden" onChange={e => {
+                                        const file = e.target.files?.[0]
+                                        if(file){
+                                            const reader = new FileReader()
+                                            reader.onload = (ev) => setPemFileContent(ev.target?.result as string)
+                                            reader.readAsText(file)
+                                        }
+                                    }} />
+                                </label>
+                                <input 
+                                    type="password"
+                                    placeholder="第二步：设置解锁密码"
+                                    className="w-full p-4 bg-slate-100 rounded-xl outline-none"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                />
+                            </div>
+                        ) : (
+                            <div className="space-y-4 text-center">
+                                <p className="text-xs text-emerald-500 font-bold">检测到已加密的密钥，请输入密码解锁</p>
+                                <input 
+                                    type="password"
+                                    placeholder="输入密码..."
+                                    className="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-400 transition-all"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    autoFocus
+                                />
+                            </div>
                         )}
 
-                        <div className='relative'>
-                            <input
-                                autoFocus
-                                type='password'
-                                placeholder={encryptedPem ? '输入解锁密码' : '设置新的登录密码'}
-                                value={password}
-                                onChange={e => setPassword(e.target.value)}
-                                className='w-full px-5 py-4 bg-white border border-slate-100 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all placeholder:text-slate-300'
-                            />
-                            <button 
-                                type='submit' 
-                                className='absolute right-2 top-2 bottom-2 aspect-square bg-slate-800 text-white rounded-xl flex items-center justify-center hover:bg-emerald-600 transition-colors'
-                            >
-                                <ArrowRight className='w-4 h-4' />
-                            </button>
-                        </div>
-                        {error && (
-                            <motion.p 
-                                initial={{ opacity: 0 }} 
-                                animate={{ opacity: 1 }} 
-                                className='text-center text-red-400 text-[10px] font-medium'
-                            >
-                                {error}
-                            </motion.p>
-                        )}
+                        <button type="submit" className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all">
+                            {encryptedPem ? "解锁进入" : "完成配置"}
+                        </button>
+
+                        {error && <p className="text-center text-red-500 text-xs font-bold">{error}</p>}
                     </form>
 
-                    <div className='mt-8 text-center'>
+                    {/* 解决“回不去”的终极手段：重置按钮 */}
+                    <div className="mt-10 pt-6 border-t border-slate-50 flex justify-between items-center">
+                        <button onClick={() => router.push('/')} className="text-xs text-slate-300 hover:text-slate-600">返回首页</button>
                         <button 
-                            onClick={() => router.push('/')}
-                            className='text-[10px] uppercase tracking-widest text-slate-300 hover:text-slate-500 transition-colors'
+                            onClick={() => {
+                                if(confirm('确定要清除本地所有登录数据吗？')) {
+                                    logout()
+                                    localStorage.clear()
+                                    window.location.reload()
+                                }
+                            }} 
+                            className="flex items-center gap-1 text-xs text-red-300 hover:text-red-500"
                         >
-                            Back to Home
+                            <LogOut size={12}/> 清除数据
                         </button>
                     </div>
                 </div>
