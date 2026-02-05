@@ -1,61 +1,40 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware' // 引入持久化中间件
-import siteContent from '@/config/site-content.json'
-import cardStyles from '@/config/card-styles.json'
-
-export type SiteContent = typeof siteContent
-export type CardStyles = typeof cardStyles
+import { persist, createJSONStorage } from 'zustand/middleware'
+import CryptoJS from 'crypto-js' // 引入加密库
 
 interface ConfigStore {
-	siteContent: SiteContent
-	cardStyles: CardStyles
-	regenerateKey: number
-	configDialogOpen: boolean
-	password: string // 新增：用于存储密钥
-	setSiteContent: (content: SiteContent) => void
-	setCardStyles: (styles: CardStyles) => void
-	setPassword: (password: string) => void // 新增：设置密钥的方法
-	resetSiteContent: () => void
-	resetCardStyles: () => void
-	regenerateBubbles: () => void
-	setConfigDialogOpen: (open: boolean) => void
+    // ... 原有属性 ...
+    encryptedPem: string  // 硬盘里存加密后的乱码
+    rawPem: string        // 内存里存解密后的原始 PEM
+    setAuth: (pem: string, password?: string) => void
+    logout: () => void
 }
 
 export const useConfigStore = create<ConfigStore>()(
-	persist(
-		(set, get) => ({
-			siteContent: { ...siteContent },
-			cardStyles: { ...cardStyles },
-			regenerateKey: 0,
-			configDialogOpen: false,
-			password: '', // 初始密钥为空
-			setSiteContent: (content: SiteContent) => {
-				set({ siteContent: content })
-			},
-			setCardStyles: (styles: CardStyles) => {
-				set({ cardStyles: styles })
-			},
-			setPassword: (password: string) => {
-				set({ password })
-			},
-			resetSiteContent: () => {
-				set({ siteContent: { ...siteContent } })
-			},
-			resetCardStyles: () => {
-				set({ cardStyles: { ...cardStyles } })
-			},
-			regenerateBubbles: () => {
-				set(state => ({ regenerateKey: state.regenerateKey + 1 }))
-			},
-			setConfigDialogOpen: (open: boolean) => {
-				set({ configDialogOpen: open })
-			}
-		}),
-		{
-			name: 'xinming-blog-storage', // 存储在 localStorage 中的 key
-			storage: createJSONStorage(() => localStorage),
-			// 关键：只持久化 password，其他 UI 状态（如弹窗是否打开）刷新即重置
-			partialize: (state) => ({ password: state.password }), 
-		}
-	)
+    persist(
+        (set) => ({
+            // ... 原有初始化 ...
+            encryptedPem: '',
+            rawPem: '',
+
+            // 登录/设置逻辑
+            setAuth: (pemContent, password) => {
+                if (password) {
+                    // 如果提供了密码，说明是初次绑定，加密后存入硬盘
+                    const encrypted = CryptoJS.AES.encrypt(pemContent, password).toString()
+                    set({ encryptedPem: encrypted, rawPem: pemContent })
+                } else {
+                    // 如果没提密码，仅更新内存（用于解密后的填充）
+                    set({ rawPem: pemContent })
+                }
+            },
+            logout: () => set({ encryptedPem: '', rawPem: '' }),
+        }),
+        {
+            name: 'xinming-secure-storage',
+            storage: createJSONStorage(() => localStorage),
+            // 关键：只把加密后的乱码存硬盘，原始 PEM 绝对不存硬盘
+            partialize: (state) => ({ encryptedPem: state.encryptedPem } as any),
+        }
+    )
 )
